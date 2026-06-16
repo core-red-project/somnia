@@ -1,0 +1,19 @@
+# CMake Build Output and Artifacts
+/build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# IDE Metadata and Configuration
+/.idea/
+.clion.source.upload.cfg
+cmake-build-debug/
+cmake-build-release/
+
+# Compiler and OS Residual Files
+.DS_Store
+*.o
+*.a
+*.so
+*.dylib
+*.out

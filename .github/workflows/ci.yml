@@ -1,0 +1,60 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  desktop-sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install clang and cmake
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake clang-format
+
+      - name: Verify Formatting Style
+        run: |
+          find core/ cli/ tests/ -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON
+
+      - name: Build Project
+        run: cmake --build build
+
+      - name: Run Test Suite
+        run: |
+          cd build
+          ctest --output-on-failure
+
+      - name: Run Telemetry Validation
+        run: ./build/cli/somnia-cli
+
+  firmware-cross-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1.1.2
+
+      - name: Install AVR Board Platform
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
+
+      - name: Bundle Core to Flat Sketch Layout
+        run: |
+          cp core/include/*.hpp firmware/
+          cp core/src/*.cpp firmware/
+
+      - name: Cross-Compile Sketch for Arduino Nano
+        run: |
+          arduino-cli compile --fqbn arduino:avr:nano firmware/

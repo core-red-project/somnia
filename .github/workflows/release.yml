@@ -1,0 +1,56 @@
+name: Production Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-release-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install clang and cmake
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1.1.2
+
+      - name: Install AVR Board Platform
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:avr
+
+      - name: Configure CMake for Desktop
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Desktop Application
+        run: cmake --build build --target somnia-cli
+
+      - name: Bundle Core to Flat Sketch Layout
+        run: |
+          cp core/include/*.hpp firmware/
+          cp core/src/*.cpp firmware/
+
+      - name: Cross-Compile AVR Bare-Metal Targets
+        run: |
+          mkdir release-assets
+          arduino-cli compile --fqbn arduino:avr:nano --output-dir release-assets firmware/
+
+      - name: Package Desktop Artifacts
+        run: |
+          cp build/cli/somnia-cli release-assets/somnia-cli-linux-x86_64
+
+      - name: Deploy GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release-assets/somnia-cli-linux-x86_64
+            release-assets/firmware.ino.hex
+            release-assets/firmware.ino.elf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
