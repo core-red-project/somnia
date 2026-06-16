@@ -54,6 +54,7 @@ jobs:
         run: |
           cp core/include/*.hpp firmware/
           cp core/src/*.cpp firmware/
+          rm -f firmware/ExportEngine.cpp firmware/ExportEngine.hpp
 
       - name: Cross-Compile Sketch for Arduino Nano
         run: |
