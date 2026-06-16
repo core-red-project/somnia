@@ -59,7 +59,7 @@ void loop() {
 
     // Jitter-free lightweight serial telemetry frames to prevent TX buffer blocking
     Serial.print(F("N:"));
-    Serial.print(event.label);
+    Serial.print(event.label.data());
     Serial.print(F(" F:"));
     Serial.println(event.frequency);
 
