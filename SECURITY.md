@@ -4,11 +4,11 @@
 
 If you find a security vulnerability in **Somnia**, report it privately before disclosing it publicly.
 
-**Preferred channel:**  
+**Preferred channel:**
 Email — `legal.sxnnyside@sxnnysideproject.com`
 
-**Alternative:**  
-GitHub Private Security Advisory
+**Alternative:**
+[GitHub Private Security Advisory](https://github.com/core-red-project/somnia/security/advisories/new)
 
 ---
 
@@ -44,9 +44,9 @@ Public disclosure is expected after a fix is available. If a fix isn't possible,
 
 ## Scope
 
-This policy covers the **Somnia** repository only.  
+This policy covers the **Somnia** repository only.
 For ecosystem-wide security concerns, use the email above.
 
 ---
 
-*Somnia is This is a CoreRed project, part of the Sxnnyside Project's experimental branch.. Part of the Sxnnyside Project.*
+*Somnia is A Core Red Project. Part of the [Sxnnyside Project](https://sxnnysideproject.com).*

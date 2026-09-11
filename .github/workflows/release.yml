@@ -35,9 +35,15 @@ jobs:
 
       - name: Bundle Core to Flat Sketch Layout
         run: |
-          cp core/include/*.hpp firmware/
-          cp core/src/*.cpp firmware/
-          rm -f firmware/ExportEngine.cpp firmware/ExportEngine.hpp
+          cp core/include/PatternEngine.hpp firmware/
+          cp core/include/ScaleEngine.hpp firmware/
+          cp core/include/SequenceEngine.hpp firmware/
+          cp core/include/SomniaCompat.hpp firmware/
+          cp core/include/AudioOutput.hpp firmware/
+          cp core/src/PatternEngine.cpp firmware/
+          cp core/src/ScaleEngine.cpp firmware/
+          cp core/src/SequenceEngine.cpp firmware/
+          rm -f firmware/ExportEngine.* firmware/MidiEngine.* firmware/WavEngine.*
 
       - name: Cross-Compile AVR Bare-Metal Targets
         run: |

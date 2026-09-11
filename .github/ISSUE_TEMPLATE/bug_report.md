@@ -12,15 +12,15 @@ assignees: ""
 
 ## Steps to reproduce
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Environment
 
-- OS: 
-- Somnia version: 
-- Clang (C++20) / Arduino AVR Toolchain (Both):
+- OS:
+- Somnia version:
+- Compiler / MCU target: <!-- e.g. Clang 17, GCC 13, ATmega328P, ESP32 -->
 
 ## Additional context
 

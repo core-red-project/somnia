@@ -47,4 +47,4 @@ This Code of Conduct applies to all project spaces: issues, pull requests, commi
 
 ---
 
-*Somnia is This is a CoreRed project, part of the Sxnnyside Project's experimental branch.. Part of the Sxnnyside Project.*
+*Somnia is A Core Red Project. Part of the [Sxnnyside Project](https://sxnnysideproject.com).*

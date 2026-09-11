@@ -8,11 +8,17 @@ class PatternEngine {
 public:
     PatternEngine() = default;
 
+    // Standard floating-point evaluation
     float getSample(float t, uint32_t seed) const;
     float getFbmSample(float t, uint32_t seed, int octaves = 2) const;
 
+    // Pure Integer Fixed-Point (Q8.8) evaluation for 8-bit AVR microcontrollers
+    // Eliminates all floating-point math, std::floor, and software emulated FPU
+    uint8_t getSampleQ8(int32_t t_q8, uint32_t seed) const;
+    uint8_t getFbmSampleQ8(int32_t t_q8, uint32_t seed, int octaves = 2) const;
+
 private:
-    static constexpr std_compat::array<uint8_t, 256> m_permutation = {
+    static constexpr std_compat::array<uint8_t, 256> m_permutation SOMNIA_PROGMEM = {
         151, 160, 137, 91,  90,  15,  131, 13,  201, 95,  96,  53,  194, 233, 7,   225, 140, 36,
         103, 30,  69,  142, 8,   99,  37,  240, 21,  10,  23,  190, 6,   148, 247, 120, 234, 75,
         0,   26,  197, 62,  94,  252, 219, 203, 117, 35,  11,  32,  57,  177, 33,  88,  237, 149,

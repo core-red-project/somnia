@@ -17,3 +17,12 @@ cmake-build-release/
 *.so
 *.dylib
 *.out
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Test & Audio Exports
+*.mid
+*.midi
+*.wav

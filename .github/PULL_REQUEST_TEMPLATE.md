@@ -17,7 +17,7 @@
 
 - [ ] Builds without errors
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
-- [ ] Commits follow Conventional Commits
+- [ ] Commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 - [ ] Tests added or updated where applicable
 
 ## Related issue

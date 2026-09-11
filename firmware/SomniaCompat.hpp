@@ -6,6 +6,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#if defined(__AVR__)
+#include <avr/pgmspace.h>
+#define SOMNIA_PROGMEM PROGMEM
+#define SOMNIA_READ_BYTE(addr) pgm_read_byte(addr)
+#define SOMNIA_READ_WORD(addr) pgm_read_word(addr)
+#else
+#define SOMNIA_PROGMEM
+#define SOMNIA_READ_BYTE(addr) (*(addr))
+#define SOMNIA_READ_WORD(addr) (*(addr))
+#endif
+
 namespace std {
 using ::floor;
 using ::pow;
@@ -95,6 +106,10 @@ constexpr T lerp(T a, T b, T t) {
 namespace std_compat = somnia;
 
 #else
+
+#define SOMNIA_PROGMEM
+#define SOMNIA_READ_BYTE(addr) (*(addr))
+#define SOMNIA_READ_WORD(addr) (*(addr))
 
 #include <algorithm>
 #include <array>

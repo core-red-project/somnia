@@ -1,21 +1,21 @@
 # Contributing to Somnia
 
-Contributions are welcome — bugs, fixes, features, or documentation.  
+Contributions are welcome — bugs, fixes, features, or documentation.
 This document covers how to work with the project as a contributor.
 
 ---
 
 ## Before You Start
 
-- Search existing issues before opening a new one.
+- Search [existing issues](https://github.com/core-red-project/somnia/issues) before opening a new one.
 - For significant changes, open an issue first to discuss the direction before writing code.
-- Read the Code of Conduct. It applies to all interactions in this project.
+- Read the [Code of Conduct](CODE_OF_CONDUCT.md). It applies to all interactions in this project.
 
 ---
 
 ## Reporting a Bug
 
-Open a GitHub Issue using the bug report template.
+Open a [GitHub Issue](https://github.com/core-red-project/somnia/issues/new/choose) using the bug report template.
 
 Include:
 - What you expected to happen
@@ -27,7 +27,7 @@ Include:
 
 ## Proposing a Feature
 
-Open a GitHub Issue using the feature request template, or submit a PR directly if the change is small and self-contained.
+Open a [GitHub Issue](https://github.com/core-red-project/somnia/issues/new/choose) using the feature request template, or submit a PR directly if the change is small and self-contained.
 
 For larger features, an issue discussion first avoids wasted effort on both sides.
 
@@ -47,7 +47,7 @@ For larger features, an issue discussion first avoids wasted effort on both side
 Before submitting:
 
 - [ ] The project builds without errors
-- [ ] Changes are described in CHANGELOG.md under `[Unreleased]`
+- [ ] Changes are described in [CHANGELOG.md](CHANGELOG.md) under `[Unreleased]`
 - [ ] The PR description explains what changed and why
 - [ ] New behavior is covered by tests where applicable
 
@@ -55,7 +55,7 @@ Before submitting:
 
 ## Commit Style
 
-This project uses Conventional Commits. Every commit message must follow the format:
+This project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). Every commit message must follow the format:
 
 ```
 <type>: <description>
@@ -96,4 +96,4 @@ If something in the codebase is unclear, open an issue with the `question` label
 
 ---
 
-*Somnia is This is a CoreRed project, part of the Sxnnyside Project's experimental branch.. Part of the Sxnnyside Project.*
+*Somnia is A Core Red Project. Part of the [Sxnnyside Project](https://sxnnysideproject.com).*

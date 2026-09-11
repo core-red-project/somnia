@@ -13,34 +13,27 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install clang and cmake
+      - name: Install Toolchain and Just
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake clang-format
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | sudo bash -s -- --to /usr/local/bin
 
-      - name: Verify Formatting Style
-        run: |
-          find core/ cli/ tests/ -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
-
-      - name: Configure CMake
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON
-
-      - name: Build Project
-        run: cmake --build build
-
-      - name: Run Test Suite
-        run: |
-          cd build
-          ctest --output-on-failure
+      - name: Run Full Quality Gate (Format, Lint, Typecheck, Test)
+        run: just check
 
       - name: Run Telemetry Validation
-        run: ./build/cli/somnia-cli
+        run: just run "-n 16 --format raw"
 
   firmware-cross-compile:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Install Just
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | sudo bash -s -- --to /usr/local/bin
 
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v1.1.2
@@ -51,11 +44,11 @@ jobs:
           arduino-cli core install arduino:avr
 
       - name: Bundle Core to Flat Sketch Layout
-        run: |
-          cp core/include/*.hpp firmware/
-          cp core/src/*.cpp firmware/
-          rm -f firmware/ExportEngine.cpp firmware/ExportEngine.hpp
+        run: just sync-firmware
 
-      - name: Cross-Compile Sketch for Arduino Nano
+      - name: Cross-Compile Sketch for Arduino Nano & Uno with Memory Footprint Audit
         run: |
-          arduino-cli compile --fqbn arduino:avr:nano firmware/
+          arduino-cli compile --fqbn arduino:avr:nano --output-dir /tmp/nano_build firmware/
+          avr-size -C --mcu=atmega328p /tmp/nano_build/firmware.ino.elf
+          arduino-cli compile --fqbn arduino:avr:uno --output-dir /tmp/uno_build firmware/
+          avr-size -C --mcu=atmega328p /tmp/uno_build/firmware.ino.elf
