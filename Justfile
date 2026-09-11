@@ -73,6 +73,11 @@ sync-firmware:
     cp core/src/ScaleEngine.cpp firmware/
     cp core/src/SequenceEngine.cpp firmware/
 
+# Cross-compile Arduino firmware for Nano and Uno
+firmware: sync-firmware
+    arduino-cli compile --fqbn arduino:avr:nano firmware/
+    arduino-cli compile --fqbn arduino:avr:uno firmware/
+
 # Build distribution packages with CPack
 package: build
     cd build && cpack

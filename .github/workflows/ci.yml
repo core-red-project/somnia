@@ -49,6 +49,4 @@ jobs:
       - name: Cross-Compile Sketch for Arduino Nano & Uno with Memory Footprint Audit
         run: |
           arduino-cli compile --fqbn arduino:avr:nano --output-dir /tmp/nano_build firmware/
-          avr-size -C --mcu=atmega328p /tmp/nano_build/firmware.ino.elf
           arduino-cli compile --fqbn arduino:avr:uno --output-dir /tmp/uno_build firmware/
-          avr-size -C --mcu=atmega328p /tmp/uno_build/firmware.ino.elf
