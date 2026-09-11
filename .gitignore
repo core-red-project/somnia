@@ -1,5 +1,6 @@
 # CMake Build Output and Artifacts
 /build/
+/build-debug/
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake

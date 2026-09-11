@@ -82,12 +82,9 @@ NoteEvent SequenceEngine::nextEvent(StreamState& state, float timeStep, ScaleTyp
         }
     }
 
-    NoteEvent event{.frequency = isRest ? static_cast<uint16_t>(0) : note.frequency,
-                    .duration_ms = duration,
-                    .label = isRest ? std_compat::string_view("REST") : note.name,
-                    .midi_note = note.midi_note,
-                    .velocity = velocity,
-                    .is_rest = isRest};
+    NoteEvent event(isRest ? static_cast<uint16_t>(0) : note.frequency, duration,
+                    isRest ? std_compat::string_view("REST") : note.name, note.midi_note, velocity,
+                    isRest);
 
     state.time += timeStep;
     state.step++;

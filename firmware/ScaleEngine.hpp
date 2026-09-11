@@ -9,6 +9,11 @@ struct Note {
     uint16_t frequency = 0;
     uint8_t midi_note = 60;
     bool is_rest = false;
+
+    constexpr Note() = default;
+    constexpr Note(std_compat::string_view n, uint16_t f, uint8_t m, bool r = false)
+        : name(n), frequency(f), midi_note(m), is_rest(r) {
+    }
 };
 
 enum class ScaleType : uint8_t {

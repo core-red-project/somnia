@@ -111,7 +111,7 @@ Note ScaleEngine::getNote(size_t index, ScaleType scale, uint8_t rootOffset, int
     uint16_t frequency = getFrequencyForMidi(midiNumber);
     std_compat::string_view label = kMidiNoteLabels[midiNumber];
 
-    return Note{.name = label, .frequency = frequency, .midi_note = midiNumber, .is_rest = false};
+    return Note(label, frequency, midiNumber, false);
 }
 
 ScaleType ScaleEngine::parseScale(std_compat::string_view name) {

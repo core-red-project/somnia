@@ -24,8 +24,8 @@ test: build
 
 # Strict typecheck / compiler correctness with sanitizers enabled
 typecheck:
-    cmake -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON
-    cmake --build build
+    cmake -B build-debug -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON
+    cmake --build build-debug
 
 # Static analysis and formatting validation
 lint:
@@ -40,7 +40,7 @@ check: format lint typecheck test
 
 # Remove build artifacts and temporary files
 clean:
-    rm -rf build test.mid test.wav test.json test.csv
+    rm -rf build build-debug test.mid test.wav test.json test.csv
 
 # Run procedural generation
 run *args="": build

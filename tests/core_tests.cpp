@@ -164,30 +164,9 @@ void testDeterminism() {
 }
 
 void testMidiExport() {
-    std::vector<NoteEvent> sequence = {NoteEvent{.frequency = 440,
-                                                 .duration_ms = 250,
-                                                 .label = "A4",
-                                                 .midi_note = 69,
-                                                 .velocity = 100,
-                                                 .is_rest = false},
-                                       NoteEvent{.frequency = 523,
-                                                 .duration_ms = 500,
-                                                 .label = "C5",
-                                                 .midi_note = 72,
-                                                 .velocity = 95,
-                                                 .is_rest = false},
-                                       NoteEvent{.frequency = 0,
-                                                 .duration_ms = 250,
-                                                 .label = "REST",
-                                                 .midi_note = 0,
-                                                 .velocity = 0,
-                                                 .is_rest = true},
-                                       NoteEvent{.frequency = 659,
-                                                 .duration_ms = 1000,
-                                                 .label = "E5",
-                                                 .midi_note = 76,
-                                                 .velocity = 110,
-                                                 .is_rest = false}};
+    std::vector<NoteEvent> sequence = {
+        NoteEvent(440, 250, "A4", 69, 100, false), NoteEvent(523, 500, "C5", 72, 95, false),
+        NoteEvent(0, 250, "REST", 0, 0, true), NoteEvent(659, 1000, "E5", 76, 110, false)};
 
     auto midiData = MidiEngine::generateMidiData(sequence, 120);
     ASSERT_TRUE(midiData.size() >= 14, "MIDI data too small to contain header");
@@ -200,18 +179,8 @@ void testMidiExport() {
 }
 
 void testWavExport() {
-    std::vector<NoteEvent> sequence = {NoteEvent{.frequency = 440,
-                                                 .duration_ms = 100,
-                                                 .label = "A4",
-                                                 .midi_note = 69,
-                                                 .velocity = 100,
-                                                 .is_rest = false},
-                                       NoteEvent{.frequency = 880,
-                                                 .duration_ms = 200,
-                                                 .label = "A5",
-                                                 .midi_note = 81,
-                                                 .velocity = 90,
-                                                 .is_rest = false}};
+    std::vector<NoteEvent> sequence = {NoteEvent(440, 100, "A4", 69, 100, false),
+                                       NoteEvent(880, 200, "A5", 81, 90, false)};
 
     auto wavData = WavEngine::generateWavData(sequence, 44100);
     ASSERT_TRUE(wavData.size() > 44, "WAV data too small for RIFF header");
@@ -226,12 +195,7 @@ void testWavExport() {
 
 void testExportEngineFormats() {
     ExportEngine exporter;
-    std::vector<NoteEvent> sequence = {NoteEvent{.frequency = 440,
-                                                 .duration_ms = 250,
-                                                 .label = "A4",
-                                                 .midi_note = 69,
-                                                 .velocity = 100,
-                                                 .is_rest = false}};
+    std::vector<NoteEvent> sequence = {NoteEvent(440, 250, "A4", 69, 100, false)};
 
     std::string json = exporter.toJson(sequence);
     ASSERT_TRUE(json.find("\"label\": \"A4\"") != std::string::npos, "JSON output missing label");

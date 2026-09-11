@@ -22,6 +22,12 @@ struct NoteEvent {
     uint8_t midi_note = 60;
     uint8_t velocity = 100;
     bool is_rest = false;
+
+    constexpr NoteEvent() = default;
+    constexpr NoteEvent(uint16_t f, uint16_t d, std_compat::string_view l, uint8_t m, uint8_t v,
+                        bool r = false)
+        : frequency(f), duration_ms(d), label(l), midi_note(m), velocity(v), is_rest(r) {
+    }
 };
 
 struct StreamState {
