@@ -2,7 +2,7 @@
 
 ![Version](https://img.shields.io/badge/version-0.5.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
-[![CI](https://github.com/core-red-project/somnia/workflows/CI/badge.svg)](https://github.com/core-red-project/somnia/actions)
+[![CI](https://github.com/core-red-project/somnia/actions/workflows/ci.yml/badge.svg)](https://github.com/core-red-project/somnia/actions)
 
 <p align="center">
   <strong>Deterministic Value Noise ✦ Zero-Allocation O(1) Core ✦ Built for Constrained Hardware</strong><br>
