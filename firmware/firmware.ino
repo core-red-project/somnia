@@ -13,11 +13,25 @@
 #include <Arduino.h>
 
 // Hardware Pin Configuration
+#if defined(ESP32)
+const uint8_t BUZZER_PIN = 25;       // DAC1 / GPIO 25
+const uint8_t MUTATION_BTN_PIN = 4;  // GPIO 4
+const uint8_t POT_TEMPO_PIN = 34;    // ADC1_CH6
+const uint8_t POT_SCALE_PIN = 35;    // ADC1_CH7
+const uint8_t POT_SEED_PIN = 32;     // ADC1_CH4
+#elif defined(ARDUINO_ARCH_RP2040) || defined(PICO_RP2040) || defined(ARDUINO_RASPBERRY_PI_PICO)
+const uint8_t BUZZER_PIN = 15;       // GPIO 15
+const uint8_t MUTATION_BTN_PIN = 2;  // GPIO 2
+const uint8_t POT_TEMPO_PIN = A0;    // GPIO 26 / ADC0
+const uint8_t POT_SCALE_PIN = A1;    // GPIO 27 / ADC1
+const uint8_t POT_SEED_PIN = A2;     // GPIO 28 / ADC2
+#else // Standard AVR (Arduino Uno / Nano)
 const uint8_t BUZZER_PIN = 8;
 const uint8_t MUTATION_BTN_PIN = 2; // External hardware interrupt pin for live seed mutation
 const uint8_t POT_TEMPO_PIN = A0;   // Analog pot for tempo (BPM)
 const uint8_t POT_SCALE_PIN = A1;   // Analog pot for scale selection
 const uint8_t POT_SEED_PIN = A2;    // Analog pot for seed offset
+#endif
 
 // Enable hardware MIDI output over TX pin (31250 baud)
 #define ENABLE_MIDI_SERIAL 0
