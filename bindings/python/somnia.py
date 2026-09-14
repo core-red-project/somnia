@@ -140,7 +140,7 @@ class Somnia:
     def version(self) -> str:
         if self._lib:
             return self._lib.somnia_version().decode("utf-8")
-        return "0.4.0"
+        return "0.5.0"
 
 if __name__ == "__main__":
     print("Testing Somnia Python Bindings...")

@@ -221,7 +221,7 @@ void testCApi() {
     somnia_c_note_event_t ev = somnia_next_event(engine, 1234, 0, 0, 120, false, 0, 0);
     ASSERT_TRUE(ev.frequency > 0, "C-API returned invalid frequency");
     ASSERT_TRUE(ev.duration_ms > 0, "C-API returned 0 duration");
-    ASSERT_TRUE(std::string(somnia_version()) == "0.4.0", "C-API version mismatch");
+    ASSERT_TRUE(std::string(somnia_version()) == "0.5.0", "C-API version mismatch");
 
     somnia_destroy(engine);
     std::cout << "testCApi passed." << std::endl;

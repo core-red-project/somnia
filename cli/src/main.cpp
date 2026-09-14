@@ -216,7 +216,7 @@ void printBanner(const ColorTheme& c, bool quiet = false) {
     if (quiet)
         return;
     std::cout << c.cyan << c.bold << "✦ Somnia " << c.reset << c.dim
-              << "v0.4.0 — Zero-Allocation Procedural Melody Engine" << c.reset << "\n"
+              << "v0.5.0 — Zero-Allocation Procedural Melody Engine" << c.reset << "\n"
               << c.gray << "  Deterministic O(1) audio stream generator" << c.reset << "\n\n";
 }
 
@@ -302,7 +302,7 @@ void printVersion(const ColorTheme& c) {
               << "Audio:        Native Speaker Playback (afplay/aplay/WAV) + Raw PCM stream\n"
               << "Exporters:    Standard MIDI 0, 16-bit PCM WAV, JSON/JSONL/CSV\n"
               << "Interactivity: 2D Piano Roll TUI + Hotkey Live Controls\n"
-              << "Platform:     Native Desktop CLI & 8-bit AVR / Arduino\n"
+              << "Platform:     Native Desktop CLI, 8-bit AVR / Arduino, ESP32 & Raspberry Pi Pico\n"
               << "License:      MIT (Core Red Project)\n";
 }
 

@@ -1,6 +1,6 @@
 # Somnia
 
-![Version](https://img.shields.io/badge/version-0.4.0-blue)
+![Version](https://img.shields.io/badge/version-0.5.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 [![CI](https://github.com/core-red-project/somnia/workflows/CI/badge.svg)](https://github.com/core-red-project/somnia/actions)
 

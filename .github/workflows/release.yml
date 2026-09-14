@@ -27,6 +27,14 @@ jobs:
           arduino-cli core update-index
           arduino-cli core install arduino:avr
 
+      - name: Set up Python for PlatformIO
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install PlatformIO
+        run: pip install --upgrade platformio
+
       - name: Configure CMake for Desktop
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
@@ -50,6 +58,19 @@ jobs:
           mkdir release-assets
           arduino-cli compile --fqbn arduino:avr:nano --output-dir release-assets firmware/
 
+      - name: Cross-Compile ESP32 & Raspberry Pi Pico Targets
+        run: |
+          pio run -d firmware -e esp32 -e pico
+          cp firmware/.pio/build/esp32/firmware.bin release-assets/somnia-firmware-esp32.bin
+          cp firmware/.pio/build/esp32/firmware.elf release-assets/somnia-firmware-esp32.elf
+          if [ -f firmware/.pio/build/pico/firmware.uf2 ]; then
+            cp firmware/.pio/build/pico/firmware.uf2 release-assets/somnia-firmware-pico.uf2
+          fi
+          if [ -f firmware/.pio/build/pico/firmware.bin ]; then
+            cp firmware/.pio/build/pico/firmware.bin release-assets/somnia-firmware-pico.bin
+          fi
+          cp firmware/.pio/build/pico/firmware.elf release-assets/somnia-firmware-pico.elf
+
       - name: Package Desktop Artifacts
         run: |
           cp build/cli/somnia-cli release-assets/somnia-cli-linux-x86_64
@@ -58,8 +79,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            release-assets/somnia-cli-linux-x86_64
-            release-assets/firmware.ino.hex
-            release-assets/firmware.ino.elf
+            release-assets/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

@@ -17,6 +17,21 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.5.0] — 2026-09-14
+
+### Added
+
+- **PlatformIO Embedded CI Validation**: Dedicated GitHub Actions job (`platformio-cross-compile`) validating automated compilation for ESP32 (`esp32dev`) and Raspberry Pi Pico (`pico`) targets on every push and pull request.
+- **ESP32 & Raspberry Pi Pico Release Distribution**: Production release workflow now builds and packages firmware binaries for ESP32 (`somnia-firmware-esp32.bin`, `.elf`) and Raspberry Pi Pico (`somnia-firmware-pico.uf2`, `.bin`, `.elf`) in GitHub Releases alongside desktop CLI and AVR targets.
+- **Justfile `firmware-pio` Recipe**: Convenient local recipe `just firmware-pio` to cross-compile PlatformIO firmware environments.
+
+### Changed
+
+- Bumped version across core libraries, C-API, Python bindings, Arduino library manifest, tests, and CLI banner to `v0.5.0`.
+- Expanded platform support line in `somnia version` output to include ESP32 & Raspberry Pi Pico.
+
+---
+
 ## [0.4.0] — 2026-09-11
 
 ### Added
@@ -62,6 +77,7 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-[Unreleased]: https://github.com/core-red-project/somnia/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/core-red-project/somnia/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/core-red-project/somnia/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/core-red-project/somnia/compare/v0.1.0...v0.4.0
 [0.1.0]: https://github.com/core-red-project/somnia/releases/tag/v0.1.0

@@ -102,7 +102,7 @@ bool somnia_export_wav(const char* filepath, uint32_t seed, uint8_t scale_type, 
 }
 
 const char* somnia_version(void) {
-    return "0.4.0";
+    return "0.5.0";
 }
 
 } // extern "C"

@@ -78,6 +78,10 @@ firmware: sync-firmware
     arduino-cli compile --fqbn arduino:avr:nano firmware/
     arduino-cli compile --fqbn arduino:avr:uno firmware/
 
+# Cross-compile firmware with PlatformIO (ESP32 and Pico)
+firmware-pio: sync-firmware
+    pio run -d firmware -e esp32 -e pico
+
 # Build distribution packages with CPack
 package: build
     cd build && cpack

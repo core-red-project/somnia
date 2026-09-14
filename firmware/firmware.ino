@@ -59,7 +59,7 @@ void setup() {
     while (!Serial) {
         ; // Wait for serial port connection
     }
-    Serial.println(F("✦ SOMNIA HW-v0.4 Initialized"));
+    Serial.println(F("✦ SOMNIA HW-v0.5 Initialized"));
     Serial.println(F("Deterministic O(1) Procedural Sound Core"));
 #endif
 
