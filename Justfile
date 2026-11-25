@@ -1,6 +1,7 @@
 # Somnia Task Runner
 
-set shell := ["/bin/sh", "-c"]
+set shell := ["sh", "-cu"]
+set windows-shell := ["sh", "-cu"]
 
 default:
     @just --list
@@ -14,11 +15,12 @@ dev:
     ./build/release/cli/somnia-cli stream
 
 build:
+    @if [ ! -d "build/release" ]; then cmake --preset release; fi
     cmake --build --preset release
 
 test:
     cmake --build --preset release
-    ctest --preset release
+    ctest --preset release --output-on-failure
 
 typecheck:
     cmake --preset dev
@@ -26,19 +28,19 @@ typecheck:
 
 lint:
     @if command -v clang-tidy >/dev/null 2>&1; then \
-        clang-tidy -p build/dev core/src/*.cpp cli/src/*.cpp; \
+        clang-tidy -p build/dev $(git ls-files "core/src/*.cpp" "cli/src/*.cpp"); \
     elif [ -x "/opt/homebrew/opt/llvm/bin/clang-tidy" ]; then \
-        /opt/homebrew/opt/llvm/bin/clang-tidy -p build/dev core/src/*.cpp cli/src/*.cpp; \
+        /opt/homebrew/opt/llvm/bin/clang-tidy -p build/dev $(git ls-files "core/src/*.cpp" "cli/src/*.cpp"); \
     else \
-        clang-format --dry-run -Werror $(find core/ cli/ tests/ firmware/ -name '*.cpp' -o -name '*.hpp' -o -name '*.ino'); \
+        clang-format --dry-run -Werror $(git ls-files "*.cpp" "*.hpp" "*.h" "*.cc" "*.ino"); \
     fi
 
 format:
-    clang-format -i $(find core/ cli/ tests/ firmware/ -name '*.cpp' -o -name '*.hpp' -o -name '*.ino')
+    clang-format -i $(git ls-files "*.cpp" "*.hpp" "*.h" "*.cc" "*.ino")
     shfmt -w scripts/ .githooks/
 
 format-check:
-    clang-format --dry-run -Werror $(find core/ cli/ tests/ firmware/ -name '*.cpp' -o -name '*.hpp' -o -name '*.ino')
+    clang-format --dry-run -Werror $(git ls-files "*.cpp" "*.hpp" "*.h" "*.cc" "*.ino")
     shfmt -d scripts/ .githooks/
 
 lint-files:

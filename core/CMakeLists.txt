@@ -19,6 +19,9 @@ target_link_libraries(somnia_core PUBLIC project_options)
 
 # Shared library for Python ctypes / external FFI bindings
 add_library(somnia_shared SHARED $<TARGET_OBJECTS:somnia_core_obj>)
-set_target_properties(somnia_shared PROPERTIES OUTPUT_NAME "somnia_core")
+set_target_properties(somnia_shared PROPERTIES 
+    OUTPUT_NAME "somnia_core"
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
+)
 target_include_directories(somnia_shared PUBLIC include)
 target_link_libraries(somnia_shared PUBLIC project_options)

@@ -63,7 +63,8 @@ void somnia_destroy(somnia_engine_t engine);
  * @param engine      Valid opaque engine handle returned by somnia_create().
  * @param seed        Deterministic seed integer (PRNG state anchor).
  * @param scale_type  Musical mode index (0: Lydian, 1: Minor Pentatonic, 2: Major Pentatonic,
- *                    3: Dorian, 4: Minor, 5: Major, 6: Mixolydian, 7: Phrygian, 8: Blues, 9: Hirajoshi).
+ *                    3: Dorian, 4: Minor, 5: Major, 6: Mixolydian, 7: Phrygian, 8: Blues, 9:
+ * Hirajoshi).
  * @param root_offset Root note pitch chromatic shift in semitones (-12..+12).
  * @param bpm         Playback tempo in Beats Per Minute (20..300).
  * @param allow_rests If true, stochastically inserts musical rests based on noise thresholds.
@@ -71,9 +72,14 @@ void somnia_destroy(somnia_engine_t engine);
  * @param time_sig    Rhythmic signature (0: 4/4, 1: 3/4, 2: 7/8).
  * @return Initialized somnia_c_note_event_t struct containing frequency, duration, and MIDI note.
  */
-somnia_c_note_event_t somnia_next_event(somnia_engine_t engine, uint32_t seed, uint8_t scale_type,
-                                        int8_t root_offset, uint16_t bpm, bool allow_rests,
-                                        uint8_t play_mode, uint8_t time_sig);
+somnia_c_note_event_t somnia_next_event(somnia_engine_t engine,
+                                        uint32_t seed,
+                                        uint8_t scale_type,
+                                        int8_t root_offset,
+                                        uint16_t bpm,
+                                        bool allow_rests,
+                                        uint8_t play_mode,
+                                        uint8_t time_sig);
 
 /**
  * @brief Serializes a procedural melody sequence directly into a Standard MIDI File (SMF format 0).
@@ -86,11 +92,16 @@ somnia_c_note_event_t somnia_next_event(somnia_engine_t engine, uint32_t seed, u
  * @param steps       Number of sequential melodic events to evaluate and serialize.
  * @return True on successful file write, false on I/O error or invalid parameters.
  */
-bool somnia_export_midi(const char* filepath, uint32_t seed, uint8_t scale_type,
-                        int8_t root_offset, uint16_t bpm, size_t steps);
+bool somnia_export_midi(const char* filepath,
+                        uint32_t seed,
+                        uint8_t scale_type,
+                        int8_t root_offset,
+                        uint16_t bpm,
+                        size_t steps);
 
 /**
- * @brief Synthesizes and serializes a procedural melody sequence into an uncompressed 16-bit 44.1kHz WAV file.
+ * @brief Synthesizes and serializes a procedural melody sequence into an uncompressed
+ * 16-bit 44.1kHz WAV file.
  *
  * @param filepath    Target output file path string on the local filesystem.
  * @param seed        Deterministic generation seed.
@@ -100,8 +111,12 @@ bool somnia_export_midi(const char* filepath, uint32_t seed, uint8_t scale_type,
  * @param steps       Number of sequential melodic events to synthesize.
  * @return True on successful file write, false on I/O error or invalid parameters.
  */
-bool somnia_export_wav(const char* filepath, uint32_t seed, uint8_t scale_type, int8_t root_offset,
-                       uint16_t bpm, size_t steps);
+bool somnia_export_wav(const char* filepath,
+                       uint32_t seed,
+                       uint8_t scale_type,
+                       int8_t root_offset,
+                       uint16_t bpm,
+                       size_t steps);
 
 /**
  * @brief Returns the SemVer version string of the compiled Somnia engine.

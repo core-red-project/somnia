@@ -136,12 +136,18 @@ class Somnia:
             candidates = [
                 os.path.join(base_dir, "build", "release", "core", "libsomnia_core.dylib"),
                 os.path.join(base_dir, "build", "release", "core", "libsomnia_core.so"),
+                os.path.join(base_dir, "build", "release", "core", "somnia_core.dll"),
+                os.path.join(base_dir, "build", "release", "core", "Release", "somnia_core.dll"),
                 os.path.join(base_dir, "build", "dev", "core", "libsomnia_core.dylib"),
                 os.path.join(base_dir, "build", "dev", "core", "libsomnia_core.so"),
+                os.path.join(base_dir, "build", "dev", "core", "somnia_core.dll"),
+                os.path.join(base_dir, "build", "dev", "core", "Debug", "somnia_core.dll"),
                 os.path.join(base_dir, "build", "core", "libsomnia_core.dylib"),
                 os.path.join(base_dir, "build", "core", "libsomnia_core.so"),
+                os.path.join(base_dir, "build", "core", "somnia_core.dll"),
                 os.path.join(base_dir, "dist", "lib", "libsomnia_core.dylib"),
                 os.path.join(base_dir, "dist", "lib", "libsomnia_core.so"),
+                os.path.join(base_dir, "dist", "lib", "somnia_core.dll"),
             ]
             for c in candidates:
                 if os.path.exists(c):

@@ -65,13 +65,14 @@ jobs:
         include:
           - { os: ubuntu-24.04, target: x86_64-unknown-linux-gnu }
           - { os: macos-15,     target: aarch64-apple-darwin }
+          - { os: windows-2022, target: x86_64-pc-windows-msvc }
     defaults:
       run:
         shell: bash
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install just
-        uses: taiki-e/install-action@183e4297cca2404691e9380e1307288dced5c82a # v2.87.25
+        uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2.90.8
         with:
           tool: just@1.58.0
       - run: just install
@@ -86,9 +87,19 @@ jobs:
             cp build/release/somnia-*-Linux.* dist/
           elif ls build/release/somnia-*-Darwin.* 1>/dev/null 2>&1; then
             cp build/release/somnia-*-Darwin.* dist/
+          elif ls build/release/somnia-*-win64.* 1>/dev/null 2>&1; then
+            cp build/release/somnia-*-win64.* dist/
+          elif ls build/release/somnia-*-win32.* 1>/dev/null 2>&1; then
+            cp build/release/somnia-*-win32.* dist/
           fi
-          cp build/release/cli/somnia-cli dist/somnia-cli-${{ matrix.target }}
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          if [ -f build/release/cli/somnia-cli ]; then
+            cp build/release/cli/somnia-cli dist/somnia-cli-${{ matrix.target }}
+          elif [ -f build/release/cli/somnia-cli.exe ]; then
+            cp build/release/cli/somnia-cli.exe dist/somnia-cli-${{ matrix.target }}.exe
+          elif [ -f build/release/cli/Release/somnia-cli.exe ]; then
+            cp build/release/cli/Release/somnia-cli.exe dist/somnia-cli-${{ matrix.target }}.exe
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist-${{ matrix.target }}
           path: dist/*
@@ -105,12 +116,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           path: dist
           merge-multiple: true
       - name: Install tools
-        uses: taiki-e/install-action@183e4297cca2404691e9380e1307288dced5c82a # v2.87.25
+        uses: taiki-e/install-action@fe3acb53a98b62c772db35de75ce0e4595e7ca8c # v2.90.8
         with:
           tool: just@1.58.0
       - name: Checksums and release notes
@@ -134,7 +145,7 @@ jobs:
                   out.write(f'Release {version}\n')
           " "$VERSION"
       - name: Create GitHub release
-        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
           files: dist/*
           body_path: RELEASE_NOTES.md
