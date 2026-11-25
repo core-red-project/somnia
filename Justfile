@@ -5,83 +5,77 @@ set shell := ["/bin/sh", "-c"]
 default:
     @just --list
 
-# Bootstrap and configure build environment
 install:
-    cmake -B build -DCMAKE_BUILD_TYPE=Release
+    cmake --preset release
+    cmake --preset dev
+    git config core.hooksPath .githooks
 
-# Local development workflow
-dev: build
-    ./build/cli/somnia-cli stream
+dev:
+    ./build/release/cli/somnia-cli stream
 
-# Produce build artifacts (Release mode)
 build:
-    cmake -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_SANITIZERS=OFF
-    cmake --build build
+    cmake --build --preset release
 
-# Run test suite
-test: build
-    cd build && ctest --output-on-failure
+test:
+    cmake --build --preset release
+    ctest --preset release
 
-# Strict typecheck / compiler correctness with sanitizers enabled
 typecheck:
-    cmake -B build-debug -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON
-    cmake --build build-debug
+    cmake --preset dev
+    cmake --build --preset dev
 
-# Static analysis and formatting validation
 lint:
-    find core/ cli/ tests/ firmware/ -name '*.cpp' -o -name '*.hpp' -o -name '*.ino' | xargs clang-format --dry-run --Werror
+    @if command -v clang-tidy >/dev/null 2>&1; then \
+        clang-tidy -p build/dev core/src/*.cpp cli/src/*.cpp; \
+    elif [ -x "/opt/homebrew/opt/llvm/bin/clang-tidy" ]; then \
+        /opt/homebrew/opt/llvm/bin/clang-tidy -p build/dev core/src/*.cpp cli/src/*.cpp; \
+    else \
+        clang-format --dry-run -Werror $(find core/ cli/ tests/ firmware/ -name '*.cpp' -o -name '*.hpp' -o -name '*.ino'); \
+    fi
 
-# Auto-format all source files
 format:
-    find core/ cli/ tests/ firmware/ -name '*.cpp' -o -name '*.hpp' -o -name '*.ino' | xargs clang-format -i
+    clang-format -i $(find core/ cli/ tests/ firmware/ -name '*.cpp' -o -name '*.hpp' -o -name '*.ino')
+    shfmt -w scripts/ .githooks/
 
-# Complete quality gate: format, lint, typecheck, test
-check: format lint typecheck test
+format-check:
+    clang-format --dry-run -Werror $(find core/ cli/ tests/ firmware/ -name '*.cpp' -o -name '*.hpp' -o -name '*.ino')
+    shfmt -d scripts/ .githooks/
 
-# Remove build artifacts and temporary files
+lint-files:
+    actionlint .github/workflows/*.yml
+    shellcheck scripts/*.sh .githooks/*
+    shfmt -d scripts/ .githooks/
+
+check: format-check lint typecheck test lint-files
+
 clean:
-    rm -rf build build-debug test.mid test.wav test.json test.csv
+    rm -rf build build-debug test.mid test.wav test.json test.csv dist release-assets
 
-# Run procedural generation
+# --- extras: domain-specific workflows ---
+
+coverage-threshold := "90"
+
 run *args="": build
-    ./build/cli/somnia-cli generate {{args}}
+    ./build/release/cli/somnia-cli generate {{args}}
 
-# Play procedural melody through computer speakers
 play *args="": build
-    ./build/cli/somnia-cli play {{args}}
+    ./build/release/cli/somnia-cli play {{args}}
 
-# Stream procedural notes live (interactive TUI)
 stream *args="": build
-    ./build/cli/somnia-cli stream {{args}}
+    ./build/release/cli/somnia-cli stream {{args}}
 
-# Run high-throughput O(1) latency microbenchmark
 bench: build
-    ./build/cli/somnia-cli bench
+    ./build/release/cli/somnia-cli bench
 
-# List musical scales and intervals
 scales *args="": build
-    ./build/cli/somnia-cli scales {{args}}
+    ./build/release/cli/somnia-cli scales {{args}}
 
-# Sync canonical embedded core to Arduino firmware
-sync-firmware:
-    cp core/include/PatternEngine.hpp firmware/
-    cp core/include/ScaleEngine.hpp firmware/
-    cp core/include/SequenceEngine.hpp firmware/
-    cp core/include/SomniaCompat.hpp firmware/
-    cp core/include/AudioOutput.hpp firmware/
-    cp core/src/PatternEngine.cpp firmware/
-    cp core/src/ScaleEngine.cpp firmware/
-    cp core/src/SequenceEngine.cpp firmware/
+firmware:
+    arduino-cli compile --fqbn arduino:avr:nano --library core firmware/
+    arduino-cli compile --fqbn arduino:avr:uno --library core firmware/
 
-# Cross-compile Arduino firmware for Nano and Uno
-firmware: sync-firmware
-    arduino-cli compile --fqbn arduino:avr:nano firmware/
-    arduino-cli compile --fqbn arduino:avr:uno firmware/
-
-# Cross-compile firmware with PlatformIO (ESP32 and Pico)
-firmware-pio: sync-firmware
+firmware-pio:
     pio run -d firmware -e esp32 -e pico
 
-# Build distribution packages with CPack
 package: build
-    cd build && cpack
+    cd build/release && cpack

@@ -1,21 +1,21 @@
-cmake_minimum_required(VERSION 3.15)
-project(Somnia VERSION 0.5.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.21)
+project(Somnia VERSION 0.6.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-if(MSVC)
-    add_compile_options(/W4 /WX)
-else()
-    add_compile_options(-Wall -Wextra -Wpedantic -Werror)
-endif()
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
-if(ENABLE_SANITIZERS)
-    if(NOT MSVC)
-        add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
-        add_link_options(-fsanitize=address,undefined)
+
+add_library(project_options INTERFACE)
+if(MSVC)
+    target_compile_options(project_options INTERFACE /W4 /WX)
+else()
+    target_compile_options(project_options INTERFACE -Wall -Wextra -Wpedantic -Werror)
+    if(ENABLE_SANITIZERS)
+        target_compile_options(project_options INTERFACE -fsanitize=address,undefined -fno-omit-frame-pointer)
+        target_link_options(project_options INTERFACE -fsanitize=address,undefined)
     endif()
 endif()
 
@@ -33,7 +33,7 @@ install(DIRECTORY core/include/ DESTINATION include/somnia FILES_MATCHING PATTER
 # CPack Packaging Configuration
 set(CPACK_PACKAGE_NAME "somnia")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
-set(CPACK_PACKAGE_VENDOR "Core Red Project")
+set(CPACK_PACKAGE_VENDOR "Core Red Project by Sxnnyside Project")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Zero-Allocation Procedural Audio Generator for Desktop & AVR")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")

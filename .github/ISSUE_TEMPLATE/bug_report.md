@@ -20,7 +20,7 @@ assignees: ""
 
 - OS:
 - Somnia version:
-- Compiler / MCU target: <!-- e.g. Clang 17, GCC 13, ATmega328P, ESP32 -->
+- Compiler: <!-- e.g. Clang 18, GCC 14, avr-gcc 12 -->
 
 ## Additional context
 

@@ -1,0 +1,12 @@
+Checks: >
+  -*,
+  bugprone-*,
+  modernize-*,
+  performance-*,
+  -bugprone-easily-swappable-parameters,
+  -modernize-use-trailing-return-type,
+  -modernize-raw-string-literal,
+  -modernize-use-auto
+
+WarningsAsErrors: ''
+HeaderFilterRegex: '^.*/(src|include)/.*'

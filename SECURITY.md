@@ -5,7 +5,7 @@
 If you find a security vulnerability in **Somnia**, report it privately before disclosing it publicly.
 
 **Preferred channel:**
-Email — `legal.sxnnyside@sxnnysideproject.com`
+Email — `security.sxnnyside@sxnnysideproject.com`
 
 **Alternative:**
 [GitHub Private Security Advisory](https://github.com/core-red-project/somnia/security/advisories/new)
@@ -49,4 +49,4 @@ For ecosystem-wide security concerns, use the email above.
 
 ---
 
-*Somnia is A Core Red Project. Part of the [Sxnnyside Project](https://sxnnysideproject.com).*
+_Somnia — A Core Red Project. Part of the [Sxnnyside Project](https://sxnnysideproject.com) ecosystem._

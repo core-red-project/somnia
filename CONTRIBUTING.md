@@ -46,7 +46,7 @@ For larger features, an issue discussion first avoids wasted effort on both side
 
 Before submitting:
 
-- [ ] The project builds without errors
+- [ ] The project builds without errors (passes the same gate as CI — see `CLAUDE.md`)
 - [ ] Changes are described in [CHANGELOG.md](CHANGELOG.md) under `[Unreleased]`
 - [ ] The PR description explains what changed and why
 - [ ] New behavior is covered by tests where applicable
@@ -67,7 +67,7 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/en/
 Accepted types:
 
 | Type       | Use for                                          |
-|------------|--------------------------------------------------|
+|------------|---------------------------------------------------|
 | `feat`     | New functionality                                |
 | `fix`      | Bug fixes                                        |
 | `docs`     | Documentation only                               |
@@ -80,10 +80,10 @@ Accepted types:
 Examples:
 
 ```
-feat: add offline fallback for config reads
-fix: prevent crash when scripts directory is missing
+feat: add hirajoshi scale quantization LUT
+fix: prevent integer overflow in Q8.8 fixed point noise
 docs: update installation steps for cross-compilation
-chore: bump dependencies to latest stable
+chore: bump CMake minimum version to 3.21
 ```
 
 Commits that don't follow this format will be flagged during review.
@@ -96,4 +96,4 @@ If something in the codebase is unclear, open an issue with the `question` label
 
 ---
 
-*Somnia is A Core Red Project. Part of the [Sxnnyside Project](https://sxnnysideproject.com).*
+*Somnia — A Core Red Project. Part of the [Sxnnyside Project](https://sxnnysideproject.com) ecosystem.*

@@ -1,77 +1,110 @@
-name: Continuous Integration
+name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  desktop-sanitizers:
-    runs-on: ubuntu-latest
+  commits:
+    name: Conventional Commits
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Validate commit messages
+        env:
+          BASE: origin/${{ github.base_ref }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: scripts/check-commit-range.sh "$BASE" "$HEAD"
 
-      - name: Install Toolchain
+  check:
+    name: check (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install just
+        uses: taiki-e/install-action@183e4297cca2404691e9380e1307288dced5c82a # v2.87.25
+        with:
+          tool: just@1.58.0
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake clang-format
+          sudo apt-get install -y clang cmake clang-format actionlint shellcheck shfmt
+      - run: just install
+      - run: just check
+      - name: Check version consistency
+        run: python3 scripts/check-versions.py
 
-      - name: Setup Just
-        uses: extractions/setup-just@v2
-
-      - name: Run Full Quality Gate (Format, Lint, Typecheck, Test)
-        run: just check
-
-      - name: Run Telemetry Validation
-        run: just run "-n 16 --format raw"
-
-  firmware-cross-compile:
-    runs-on: ubuntu-latest
+  arduino:
+    name: Arduino Library & Sketches
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Setup Just
-        uses: extractions/setup-just@v2
-
-      - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1.1.2
-
-      - name: Install AVR Board Platform
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@b3cda96fddef6af6c56b4c5efb5c47e2357935db # v2.1.0
+      - name: Install AVR core
         run: |
           arduino-cli core update-index
           arduino-cli core install arduino:avr
-
-      - name: Bundle Core to Flat Sketch Layout
-        run: just sync-firmware
-
-      - name: Cross-Compile Sketch for Arduino Nano & Uno with Memory Footprint Audit
+      - name: Compile firmware sketch (Nano)
+        run: arduino-cli compile --fqbn arduino:avr:nano --library firmware/ firmware/firmware.ino
+      - name: Compile firmware sketch (Uno)
+        run: arduino-cli compile --fqbn arduino:avr:uno --library firmware/ firmware/firmware.ino
+      - name: Compile reference examples
         run: |
-          arduino-cli compile --fqbn arduino:avr:nano --output-dir /tmp/nano_build firmware/
-          arduino-cli compile --fqbn arduino:avr:uno --output-dir /tmp/uno_build firmware/
+          arduino-cli compile --fqbn arduino:avr:nano --library firmware/ firmware/examples/01_piezo_buzzer/01_piezo_buzzer.ino
+          arduino-cli compile --fqbn arduino:avr:nano --library firmware/ firmware/examples/02_usb_midi_player/02_usb_midi_player.ino
+          arduino-cli compile --fqbn arduino:avr:nano --library firmware/ firmware/examples/03_i2s_ambient/03_i2s_ambient.ino
 
-  platformio-cross-compile:
-    runs-on: ubuntu-latest
+  bindings:
+    name: Language Bindings
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Setup Just
-        uses: extractions/setup-just@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install just
+        uses: taiki-e/install-action@183e4297cca2404691e9380e1307288dced5c82a # v2.87.25
         with:
-          python-version: '3.10'
-
-      - name: Install PlatformIO
-        run: pip install --upgrade platformio
-
-      - name: Bundle Core to Flat Sketch Layout
-        run: just sync-firmware
-
-      - name: Cross-Compile ESP32 and Raspberry Pi Pico Targets
-        run: pio run -d firmware -e esp32 -e pico
-
+          tool: just@1.58.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@887a942a15af3a7626099df99e897a18d9e5ab3a # v5.1.0
+      - name: Install Bun
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+        with:
+          bun-version: 1.4.4
+      - name: Build C++ core shared library
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake
+          just build
+      - name: Test Python bindings
+        run: PYTHONPATH=bindings/python python3 -m unittest discover -s bindings/python/tests
+      - name: Test TypeScript bindings
+        run: cd bindings/npm && bun test

@@ -1,0 +1,41 @@
+{
+  "name": "@sxnnyside/somnia",
+  "version": "0.6.0",
+  "description": "Deterministic zero-allocation procedural audio generator and ambient synthesizer engine",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target browser && bun build src/index.ts --outfile dist/index.cjs --target node && bun x tsc && rm -rf dist/src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/core-red-project/somnia.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "audio",
+    "synth",
+    "procedural",
+    "music",
+    "ambient",
+    "generative",
+    "webaudio"
+  ],
+  "author": "Core Red Project",
+  "license": "MPL-2.0"
+}

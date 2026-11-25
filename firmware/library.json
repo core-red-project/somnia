@@ -1,0 +1,39 @@
+{
+  "name": "somnia",
+  "version": "0.6.0",
+  "description": "Deterministic zero-allocation procedural audio generator for AVR, ESP32, and RP2040 microcontrollers.",
+  "keywords": [
+    "audio",
+    "synth",
+    "procedural",
+    "midi",
+    "generative",
+    "algorithmic-music",
+    "i2s"
+  ],
+  "authors": [
+    {
+      "name": "Core Red Project",
+      "url": "https://github.com/core-red-project",
+      "maintainer": true
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/core-red-project/somnia.git"
+  },
+  "homepage": "https://github.com/core-red-project/somnia",
+  "license": "MPL-2.0",
+  "frameworks": ["arduino"],
+  "platforms": ["atmelavr", "espressif32", "raspberrypi", "atmelsam"],
+  "export": {
+    "include": [
+      "src/*",
+      "library.properties",
+      "examples/*/*.ino"
+    ]
+  },
+  "examples": [
+    "examples/*/*.ino"
+  ]
+}

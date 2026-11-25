@@ -1,8 +1,13 @@
 # Somnia
 
-![Version](https://img.shields.io/badge/version-0.5.0-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-[![CI](https://github.com/core-red-project/somnia/actions/workflows/ci.yml/badge.svg)](https://github.com/core-red-project/somnia/actions)
+![Somnia banner](docs/assets/somnia-banner.png)
+
+![Version](https://img.shields.io/badge/version-0.6.0-blue)
+![License](https://img.shields.io/badge/License-MPL--2.0-green)
+[![CI](https://github.com/core-red-project/somnia/actions/workflows/ci.yml/badge.svg)](https://github.com/core-red-project/somnia/actions/workflows/ci.yml)
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS%20%7C%20AVR%20%7C%20ESP32%20%7C%20RP2040-lightgrey)
+[![Discord](https://img.shields.io/badge/Discord-join-5865F2)](https://discord.gg/h3hhNY8VTE)
+[![Patreon](https://img.shields.io/badge/Patreon-SxnnysideProject-F96854)](https://patreon.com/SxnnysideProject)
 
 <p align="center">
   <strong>Deterministic Value Noise ✦ Zero-Allocation O(1) Core ✦ Built for Constrained Hardware</strong><br>
@@ -30,16 +35,16 @@ The system utilizes a seedable 1D Perlin Value Noise generator with Fractal Brow
 
 ### Philosophy
 
-> *"If a line of code requires dynamic memory to express art, the problem is the line, not the hardware."*
+> _"If a line of code requires dynamic memory to express art, the problem is the line, not the hardware."_
 
-This is a Core Red Project, part of the Sxnnyside Project's experimental branch.
+Part of the Core Red Project realm within the Sxnnyside Project ecosystem.
 
 ## Features
 
 - **Zero-Allocation O(1) Engine**: Constexpr lookup boundaries, precalculated 12-TET frequency tables (LUT), fixed-point Q8.8 arithmetic, and zero heap allocations.
-- **Microsecond Latency**: ~23.4 nanoseconds per note event (~42M notes/second throughput) with guaranteed deterministic execution.
+- **Sub-Microsecond Latency**: ~100 nanoseconds per note event (~9M+ notes/second throughput) with guaranteed deterministic execution.
 - **10 Musical Scales**: Lydian, Minor Pentatonic, Major Pentatonic, Dorian, Natural Minor, Major, Mixolydian, Phrygian, Blues, and Hirajoshi with full chromatic root transposition.
-- **Interactive TUI Stream**: Live audio streaming with real-time non-blocking 2D piano roll lanes and interactive hotkeys (`[Space]`, `[S]`, `[R]`, `[M]`, `[+/-]`).
+- **Interactive TUI Stream**: Live audio streaming with real-time non-blocking 2D piano roll lanes and interactive hotkeys (`[Space]`, `[S]`, `[R]`, `[Q/ESC]`).
 - **DAW & Audio Exporters**: Direct export to Standard MIDI Files (SMF Format 0, 480 PPQN), 16-bit 44.1kHz WAV PCM audio, JSON, and CSV.
 - **Embedded AVR & Multi-MCU**: Native support for Arduino Uno/Nano (ATmega328P), ESP32, and Raspberry Pi Pico with potentiometer inputs and 31250 baud MIDI serial.
 - **Stable C-API & Python Bindings**: Exported `somnia_c.h` ABI with dynamic library and high-level Python `ctypes` bindings.
@@ -47,13 +52,63 @@ This is a Core Red Project, part of the Sxnnyside Project's experimental branch.
 
 ## Installation
 
-### Prerequisites
+### Package Managers
 
-- CMake (3.15 or newer)
+#### Homebrew (macOS / Linux)
+
+```bash
+brew install sxnnyside-project/tap/somnia-cli
+```
+
+#### Arch Linux (AUR)
+
+```bash
+yay -S somnia-bin
+```
+
+#### Python (PyPI)
+
+```bash
+pip install somnia-audio     # uv add somnia-audio
+```
+
+#### Node.js / Bun (npm)
+
+```bash
+bun add @sxnnyside/somnia     # npm i @sxnnyside/somnia
+```
+
+#### Embedded Microcontrollers (PlatformIO)
+
+Add `sxnnyside/somnia` to your `platformio.ini`:
+
+```ini
+[env:my_board]
+lib_deps =
+    sxnnyside/somnia
+```
+
+#### Embedded Microcontrollers (Arduino IDE)
+
+Open the **Library Manager** (`Ctrl+Shift+I` or `Cmd+Shift+I`), search for `Somnia`, and click **Install**.
+
+---
+
+### Prebuilt Binaries
+
+Standalone precompiled binaries for macOS (Apple Silicon arm64) and Linux (x86_64) are available on [GitHub Releases](https://github.com/core-red-project/somnia/releases).
+
+---
+
+### From Source
+
+#### Prerequisites
+
+- CMake (3.21 or newer)
 - Clang or GCC (C++20 supporting compiler)
 - just (command runner)
 
-### From Source
+#### Build Commands
 
 ```bash
 git clone https://github.com/core-red-project/somnia.git
@@ -85,14 +140,7 @@ somnia bench
 
 ## Architecture
 
-```
-somnia/
-├── core/             # Zero-dependency C++20 engine (Scale, Pattern, Sequence, Midi, Wav)
-├── cli/              # Modern desktop CLI with interactive 2D TUI and audio synthesis
-├── firmware/         # Arduino Library (library.properties) and hardware sketch
-├── bindings/         # C-API ABI and Python ctypes bindings
-└── tests/            # Automated test suite with sanitizers
-```
+For a detailed breakdown, see [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Contributing
 
@@ -102,7 +150,7 @@ Before contributing, read the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under **Mozilla Public License 2.0 (MPL-2.0)** — see the [LICENSE](LICENSE) file for details.
 
 ---
 

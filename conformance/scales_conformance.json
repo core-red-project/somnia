@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "engine": "somnia",
+  "version": "0.6.0",
+  "conformance_tests": [
+    {
+      "name": "scale_quantization_c_dorian",
+      "seed": 12345,
+      "scale": "dorian",
+      "root": 0,
+      "bpm": 120,
+      "steps": 4,
+      "expected_midi_notes": [98, 79, 87, 60]
+    },
+    {
+      "name": "scale_quantization_hirajoshi",
+      "seed": 42,
+      "scale": "hirajoshi",
+      "root": 9,
+      "bpm": 100,
+      "steps": 4,
+      "expected_midi_notes": [93, 88, 76, 95]
+    }
+  ]
+}

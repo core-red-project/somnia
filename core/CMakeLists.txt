@@ -1,25 +1,24 @@
-add_library(somnia_core STATIC
-    src/ScaleEngine.cpp
-    src/PatternEngine.cpp
-    src/SequenceEngine.cpp
-    src/ExportEngine.cpp
-    src/MidiEngine.cpp
-    src/WavEngine.cpp
+add_library(somnia_core_obj OBJECT
+    src/scale_engine.cpp
+    src/pattern_engine.cpp
+    src/sequence_engine.cpp
+    src/export_engine.cpp
+    src/midi_engine.cpp
+    src/wav_engine.cpp
     src/somnia_c.cpp
 )
 
+target_include_directories(somnia_core_obj PUBLIC include)
+target_link_libraries(somnia_core_obj PUBLIC project_options)
+set_target_properties(somnia_core_obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+# Static library target
+add_library(somnia_core STATIC $<TARGET_OBJECTS:somnia_core_obj>)
 target_include_directories(somnia_core PUBLIC include)
+target_link_libraries(somnia_core PUBLIC project_options)
 
-# Optional shared library for Python ctypes / external FFI bindings
-add_library(somnia_shared SHARED
-    src/ScaleEngine.cpp
-    src/PatternEngine.cpp
-    src/SequenceEngine.cpp
-    src/ExportEngine.cpp
-    src/MidiEngine.cpp
-    src/WavEngine.cpp
-    src/somnia_c.cpp
-)
-
+# Shared library for Python ctypes / external FFI bindings
+add_library(somnia_shared SHARED $<TARGET_OBJECTS:somnia_core_obj>)
 set_target_properties(somnia_shared PROPERTIES OUTPUT_NAME "somnia_core")
 target_include_directories(somnia_shared PUBLIC include)
+target_link_libraries(somnia_shared PUBLIC project_options)

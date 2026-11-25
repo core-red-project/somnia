@@ -22,8 +22,20 @@ cmake-build-release/
 # Python
 __pycache__/
 *.py[cod]
+*.egg-info/
+/dist/
+bindings/python/dist/
+bindings/npm/dist/
+bindings/npm/node_modules/
 
 # Test & Audio Exports
 *.mid
 *.midi
 *.wav
+
+# Animoria cache & staged cleanup
+.animoria/
+
+# Tooling caches
+.cache/
+compile_commands.json

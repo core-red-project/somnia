@@ -1,0 +1,9 @@
+CompileFlags:
+  CompilationDatabase: build/dev
+  Add: [-Wno-unknown-warning-option]
+
+Diagnostics:
+  ClangTidy:
+    Remove:
+      - readability-identifier-naming
+      - bugprone-easily-swappable-parameters

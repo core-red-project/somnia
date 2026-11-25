@@ -1,0 +1,33 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{rs,py,cs,cpp,cc,cxx,c,h,hpp,swift,kt,kts,php,jl,asm,inc}]
+indent_size = 4
+
+# shfmt reads these keys; hooks have no extension
+[{*.{sh,bash},.githooks/*}]
+switch_case_indent = true
+binary_next_line = true
+
+# gdformat writes tabs
+[*.gd]
+indent_style = tab
+
+[{Justfile,justfile,*.just}]
+indent_size = 4
+
+[{Makefile,makefile,*.mk}]
+indent_style = tab
+
+[*.{bat,cmd}]
+end_of_line = crlf
