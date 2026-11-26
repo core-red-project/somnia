@@ -82,7 +82,7 @@ CliConfig parseCommandLine(int argc, char* argv[]) {
         cfg.command = "stream";
         startIdx = 1;
     } else {
-        throw std::invalid_argument("Unknown command '" + firstArg + "'. See 'somnia --help'.");
+        throw std::invalid_argument("Unknown command '" + firstArg + "'. See 'somnia-cli --help'.");
     }
 
     for (int i = startIdx; i < argc; ++i) {
@@ -105,14 +105,14 @@ CliConfig parseCommandLine(int argc, char* argv[]) {
             std::string s = argv[++i];
             if (!ScaleEngine::isValidScaleName(s)) {
                 throw std::invalid_argument("Unknown musical scale '" + s +
-                                            "'. Run 'somnia scales' for supported scales.");
+                                            "'. Run 'somnia-cli scales' for supported scales.");
             }
             cfg.scaleName = s;
         } else if (arg.starts_with("--scale=")) {
             std::string s = arg.substr(8);
             if (!ScaleEngine::isValidScaleName(s)) {
                 throw std::invalid_argument("Unknown musical scale '" + s +
-                                            "'. Run 'somnia scales' for supported scales.");
+                                            "'. Run 'somnia-cli scales' for supported scales.");
             }
             cfg.scaleName = s;
         } else if ((arg == "-r" || arg == "--root") && i + 1 < argc) {
@@ -211,7 +211,7 @@ CliConfig parseCommandLine(int argc, char* argv[]) {
             cfg.realtimeDelay = false;
         } else {
             throw std::invalid_argument("Unknown argument or flag '" + arg +
-                                        "'. See 'somnia --help'.");
+                                        "'. See 'somnia-cli --help'.");
         }
     }
 

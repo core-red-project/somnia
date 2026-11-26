@@ -39,3 +39,8 @@ bindings/npm/node_modules/
 # Tooling caches
 .cache/
 compile_commands.json
+
+# PlatformIO
+.pio/
+firmware/.pio/
+*.ino.cpp

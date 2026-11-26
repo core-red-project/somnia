@@ -59,7 +59,7 @@ void CommandRegistry::printHelp(const ColorTheme& c) const {
 }
 
 void CommandRegistry::printVersion(const ColorTheme& c) const {
-    std::cout << c.bold << "somnia" << c.reset << " version " << c.cyan << "0.6.0" << c.reset
+    std::cout << c.bold << "somnia-cli" << c.reset << " version " << c.cyan << "0.6.0" << c.reset
               << "\n"
               << c.dim << "Core Red Project — Sxnnyside Quality Standard (MPL-2.0)" << c.reset
               << "\n"

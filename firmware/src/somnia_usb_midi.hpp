@@ -3,8 +3,16 @@
 #include "somnia_midi.hpp"
 
 // USB-MIDI Class Compliant Driver (TinyUSB / Adafruit TinyUSB compatible)
-// Enables native plug & play operation on RP2040 and ESP32-S2/S3 without third-party drivers
-#if defined(USE_TINYUSB) || defined(ARDUINO_ARCH_RP2040) || defined(CONFIG_TINYUSB_ENABLED)
+// Enables native plug & play operation on RP2040 and ESP32-S2/S3 when TinyUSB is present
+#if defined(__has_include)
+#if __has_include(<Adafruit_TinyUSB.h>)
+#define SOMNIA_HAS_USB_MIDI 1
+#endif
+#elif defined(USE_TINYUSB) || defined(CONFIG_TINYUSB_ENABLED)
+#define SOMNIA_HAS_USB_MIDI 1
+#endif
+
+#if defined(SOMNIA_HAS_USB_MIDI)
 #include <Adafruit_TinyUSB.h>
 
 class UsbMidiOutput : public MidiOutput {

@@ -5,10 +5,11 @@
 #include <Arduino.h>
 #include <Somnia.h>
 
-#if defined(ARDUINO_ARCH_RP2040) || defined(ESP32)
+#if defined(SOMNIA_HAS_USB_MIDI)
 UsbMidiOutput midiOut;
 #else
-// Fallback to Serial UART MIDI for standard AVR boards
+// Fallback to Serial UART MIDI for standard AVR boards, classic ESP32, and boards without native
+// USB-MIDI
 SerialMidiOutput midiOut(Serial);
 #endif
 

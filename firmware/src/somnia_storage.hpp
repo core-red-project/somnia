@@ -2,7 +2,15 @@
 
 #ifdef ARDUINO
 #include <Arduino.h>
+#if defined(__has_include)
+#if __has_include(<EEPROM.h>)
 #include <EEPROM.h>
+#define SOMNIA_HAS_EEPROM 1
+#endif
+#elif !defined(ARDUINO_ARCH_RP2040) && !defined(ARDUINO_ARCH_MBED)
+#include <EEPROM.h>
+#define SOMNIA_HAS_EEPROM 1
+#endif
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
@@ -104,6 +112,7 @@ private:
 };
 
 #ifdef ARDUINO
+#if defined(SOMNIA_HAS_EEPROM)
 // Hardware EEPROM backend for microcontrollers with wear-leveling update()
 class EepromStorageBackend : public StorageBackend {
 public:
@@ -141,6 +150,15 @@ public:
         return true;
     }
 };
+#else
+// In-memory fallback for platforms lacking hardware EEPROM emulation (e.g. RP2040 official Mbed
+// core)
+class EepromStorageBackend : public MemoryStorageBackend<256> {
+public:
+    void begin(size_t /*size*/ = sizeof(SomniaConfig)) noexcept {
+    }
+};
+#endif
 #endif
 
 // Storage manager handling serialization, validation, and safe persistence
