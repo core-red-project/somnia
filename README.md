@@ -122,20 +122,20 @@ just build
 
 ```bash
 # Stream ambient procedural melodies with live 2D piano roll
-somnia stream --scale dorian --bpm 120 --rests
+somnia-cli stream --scale dorian --bpm 120 --rests
 
 # Synthesize and play live through computer speakers
-somnia play --scale hirajoshi -n 16 --bpm 120
+somnia-cli play --scale hirajoshi -n 16 --bpm 120
 
 # Generate structured notes in JSON format
-somnia generate -n 16 --scale blues --json
+somnia-cli generate -n 16 --scale blues --json
 
 # Export to Standard MIDI (.mid) and 16-bit WAV audio (.wav)
-somnia export --format midi -o ambient.mid --steps 32
-somnia export --format wav -o ambient.wav --steps 32
+somnia-cli export --format midi -o ambient.mid --steps 32
+somnia-cli export --format wav -o ambient.wav --steps 32
 
 # Run high-throughput O(1) microbenchmark
-somnia bench
+somnia-cli bench
 ```
 
 ## Architecture

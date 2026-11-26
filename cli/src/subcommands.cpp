@@ -679,7 +679,7 @@ public:
                   << "  Total events:  " << c.bold << count << c.reset << "\n"
                   << "  Time elapsed:  " << c.bold << (static_cast<double>(totalMs) / 1000.0)
                   << " s" << c.reset << "\n"
-                  << "  Replay melody: " << c.yellow << "somnia play --seed " << activeSeed
+                  << "  Replay melody: " << c.yellow << "somnia-cli play --seed " << activeSeed
                   << " --scale " << activeScaleName << " --root " << cfg.rootNote << " --bpm "
                   << cfg.bpm << " -n " << count;
         if (cfg.playMode != "melody") {

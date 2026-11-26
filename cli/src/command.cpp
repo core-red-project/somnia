@@ -20,7 +20,7 @@ Command* CommandRegistry::findCommand(std::string_view name) const {
 void CommandRegistry::printHelp(const ColorTheme& c) const {
     printBanner(c);
     std::cout << c.bold << "USAGE:" << c.reset << "\n"
-              << "  somnia <command> [options]\n\n"
+              << "  somnia-cli <command> [options]\n\n"
               << c.bold << "COMMANDS:" << c.reset << "\n"
               << "  " << c.cyan << "stream" << c.reset
               << "      Live interactive terminal streaming (2D piano roll tracker)\n"
@@ -52,10 +52,10 @@ void CommandRegistry::printHelp(const ColorTheme& c) const {
               << "  -v, --version          Display engine version and architecture\n"
               << "  -h, --help             Display this guide\n\n"
               << c.bold << "EXAMPLES:" << c.reset << "\n"
-              << "  somnia stream --scale dorian --root D --bpm 110\n"
-              << "  somnia play --scale hirajoshi --mode arpeggio --bpm 132\n"
-              << "  somnia export --scale lydian --midi melody.mid --steps 64\n"
-              << "  somnia generate --format pcm | aplay -r 44100 -f S16_LE\n\n";
+              << "  somnia-cli stream --scale dorian --root D --bpm 110\n"
+              << "  somnia-cli play --scale hirajoshi --mode arpeggio --bpm 132\n"
+              << "  somnia-cli export --scale lydian --midi melody.mid --steps 64\n"
+              << "  somnia-cli generate --format pcm | aplay -r 44100 -f S16_LE\n\n";
 }
 
 void CommandRegistry::printVersion(const ColorTheme& c) const {

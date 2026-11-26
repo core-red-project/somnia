@@ -83,16 +83,25 @@ export interface NoteEvent {
 }
 
 /**
- * Internal fixed-point Q8.8 state representation for stream continuity.
+ * Internal stream state representation for continuous procedural generation.
  *
  * @public
  */
-export interface StreamStateQ8 {
-  /** Phase accumulator in fixed-point Q8.8 format. */
-  phaseQ8: number;
+export interface StreamState {
+  /** Integer coordinate cell index. */
+  cell: number;
+  /** Normalized sub-cell phase fraction [0.0, 1.0). */
+  frac: number;
   /** Monotonic step counter. */
-  stepIndex: number;
+  step: number;
 }
+
+/**
+ * Backward compatibility alias for StreamState.
+ *
+ * @deprecated Use StreamState instead.
+ */
+export type StreamStateQ8 = StreamState;
 
 /**
  * Standard 12-TET Equal Temperament Frequency Lookup Table (MIDI 0..127).
@@ -141,7 +150,112 @@ export const SCALE_INTERVALS: Record<ScaleType, readonly number[]> = {
 };
 
 /**
- * State-preserving deterministic procedural audio generator.
+ * Classic Perlin 256-entry permutation table matching the C++ Somnia core.
+ *
+ * @internal
+ */
+export const PERMUTATION: readonly number[] = [
+  151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103,
+  30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26,
+  197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56, 87, 174,
+  20, 125, 136, 171, 168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231,
+  83, 111, 229, 122, 60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40, 244, 102, 143,
+  54, 65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132, 187, 208, 89, 18, 169, 200, 196,
+  135, 130, 116, 188, 189, 141, 1, 120, 16, 22, 112, 64, 42, 218, 14, 5, 228, 121, 109,
+  178, 104, 251, 127, 24, 4, 150, 254, 98, 115, 31, 224, 124, 172, 86, 170, 49, 180, 250,
+  195, 183, 29, 28, 248, 202, 108, 101, 223, 82, 156, 147, 212, 152, 67, 192, 184, 114, 122,
+  81, 110, 129, 214, 224, 123, 93, 25, 189, 51, 46, 212, 232, 206, 136, 159, 144, 210, 24,
+  78, 188, 155, 34, 97, 84, 111, 236, 10, 61, 59, 173, 213, 238, 204, 175, 47, 85, 11,
+  100, 66, 221, 153, 190, 241, 80, 220, 45, 146, 222, 255, 113, 137, 239, 101, 145, 186, 244,
+  150, 124, 185, 240, 184, 229, 165, 230, 180, 193, 107, 179, 167, 191, 106, 2, 72, 249, 185,
+  126, 242, 84, 181, 44, 50, 71, 128, 183,
+];
+
+function hashIndex(i: number, seed: number): number {
+  const h = Math.imul((i ^ seed) >>> 0, 2654435761) >>> 0;
+  return (h >>> 24) & 255;
+}
+
+function getSample(cell: number, frac: number, seed: number): number {
+  const p0 = PERMUTATION[hashIndex(cell, seed)];
+  const p1 = PERMUTATION[hashIndex((cell + 1) >>> 0, seed)];
+
+  const g0 = p0 & 1 ? 1.0 : -1.0;
+  const g1 = p1 & 1 ? 1.0 : -1.0;
+
+  const v0 = g0 * frac;
+  const v1 = g1 * (frac - 1.0);
+
+  const s = frac * frac * (3.0 - 2.0 * frac);
+  const noise = v0 + s * (v1 - v0);
+  return noise + 0.5;
+}
+
+function getFbmSample(cell: number, frac: number, seed: number, octaves = 2): number {
+  let result = 0.0;
+  let amplitude = 1.0;
+  let max_val = 0.0;
+
+  for (let i = 0; i < octaves; ++i) {
+    const mult = (1 << i) >>> 0;
+    let cur_cell = Math.imul(cell, mult) >>> 0;
+    let cur_frac = frac * mult;
+    if (cur_frac >= 1.0) {
+      const whole = Math.floor(cur_frac);
+      cur_cell = (cur_cell + whole) >>> 0;
+      cur_frac -= whole;
+    }
+
+    const sample = getSample(cur_cell, cur_frac, seed) - 0.5;
+    result += sample * amplitude;
+    max_val += 0.5 * amplitude;
+    amplitude *= 0.5;
+  }
+
+  if (max_val === 0.0) return 0.5;
+  return (result / max_val) * 0.5 + 0.5;
+}
+
+function applyPlayMode(index: number, step: number, mode: PlayMode): number {
+  if (mode === PlayMode.Arpeggio) {
+    const arpeggioOffsets = [0, 2, 4, 7];
+    return index + arpeggioOffsets[step % 4];
+  }
+  if (mode === PlayMode.Chords) {
+    const chordBase = Math.floor(step / 4) % 7;
+    return chordBase + (index % 3) * 2;
+  }
+  return index;
+}
+
+function calculateDuration(rhythmIndex: number, bpm: number, timeSig: TimeSignature): number {
+  if (bpm > 0) {
+    const safeBpm = Math.max(20, Math.min(300, bpm));
+    const beatMs = Math.floor(60000 / safeBpm);
+    const sixteenth = Math.max(1, Math.floor(beatMs / 4));
+    const eighth = Math.floor(beatMs / 2);
+    const quarter = beatMs;
+    const half = beatMs * 2;
+
+    if (timeSig === TimeSignature.ThreeFour) {
+      const dottedQuarter = beatMs + Math.floor(beatMs / 2);
+      const ternarySubdivisions = [eighth, quarter, dottedQuarter];
+      return ternarySubdivisions[rhythmIndex % 3];
+    }
+    if (timeSig === TimeSignature.SevenEight) {
+      const eighthNote = Math.floor(beatMs / 2);
+      const sevenEightSubdivisions = [eighthNote, eighthNote * 2, eighthNote * 3];
+      return sevenEightSubdivisions[rhythmIndex % 3];
+    }
+    const bpmSubdivisions = [sixteenth, eighth, quarter, half];
+    return bpmSubdivisions[rhythmIndex % 4];
+  }
+  const defaultSubdivisions = [100, 200, 400];
+  return defaultSubdivisions[rhythmIndex % 3];
+}
+
+/**
+ * State-preserving deterministic procedural audio generator matching the native C++ core.
  *
  * @public
  * @example
@@ -154,14 +268,9 @@ export const SCALE_INTERVALS: Record<ScaleType, readonly number[]> = {
  * ```
  */
 export class SomniaEngine {
-  /**
-   * Internal stream state.
-   * @internal
-   */
-  private state: StreamStateQ8 = {
-    phaseQ8: 0,
-    stepIndex: 0,
-  };
+  private cell = 0;
+  private frac = 0;
+  private step = 0;
 
   /**
    * Creates a new instance of the Somnia generator engine.
@@ -177,54 +286,65 @@ export class SomniaEngine {
    * @param rootNote - Chromatic transposition in semitones (0 = C). Defaults to 0.
    * @param bpm - Playback tempo in Beats Per Minute (must be > 0). Defaults to 120.
    * @param hasRests - Whether to probabilistically insert musical pauses. Defaults to true.
+   * @param mode - Playback voicing mode (Melody, Arpeggio, Chords). Defaults to Melody.
+   * @param timeSig - Metric time signature (4/4, 3/4, 7/8). Defaults to 4/4.
+   * @param timeStep - Phase progression step size per event. Defaults to 0.25.
    * @returns Generated note event structure.
    * @throws RangeError - If bpm is less than or equal to 0.
    */
   public nextEvent(
     scale: ScaleType = ScaleType.Dorian,
-    rootNote: number = 0,
-    bpm: number = 120,
-    hasRests: boolean = true
+    rootNote = 0,
+    bpm = 120,
+    hasRests = true,
+    mode: PlayMode = PlayMode.Melody,
+    timeSig: TimeSignature = TimeSignature.FourFour,
+    timeStep = 0.25
   ): NoteEvent {
     if (bpm <= 0) {
       throw new RangeError("BPM must be greater than 0");
     }
-    // 0.25 timeStep in Q8 fixed-point arithmetic (256 * 0.25 = 64)
-    const timeStepQ8 = 64;
-    this.state.phaseQ8 = (this.state.phaseQ8 + timeStepQ8) & 0x7fffffff;
-    this.state.stepIndex++;
 
-    // Deterministic pseudo-random integer hash
-    let h = (this.seed ^ (this.state.stepIndex * 1664525 + 1013904223)) >>> 0;
-    h = ((h ^ (h >>> 16)) * 0x45d9f3b) >>> 0;
-    h = ((h ^ (h >>> 16)) * 0x45d9f3b) >>> 0;
-    h = (h ^ (h >>> 16)) >>> 0;
-
-    // Rest evaluation (15% probability if rests enabled)
-    if (hasRests && (h % 100) < 15) {
-      const stepDurationMs = Math.round(60000 / bpm);
-      return {
-        frequency: 0,
-        durationMs: stepDurationMs,
-        label: "REST",
-        midiNote: 0,
-        velocity: 0,
-        isRest: true,
-      };
-    }
+    const pitchSample = getFbmSample(this.cell, this.frac, this.seed, 2);
+    const scaledPitch = Math.max(0, Math.min(100, pitchSample * 100.0));
+    const index = applyPlayMode(Math.floor(scaledPitch), this.step, mode);
 
     const intervals = SCALE_INTERVALS[scale];
-    const degree = h % intervals.length;
-    const octaveOffset = (Math.floor(h / 7) % 3) - 1; // -1, 0, +1 octave
-    const baseOctave = 4 + octaveOffset;
+    const scaleSize = intervals.length;
+    const stepIdx = index % scaleSize;
+    const octaveShift = Math.floor(index / scaleSize) % 4;
 
-    const midiNote = Math.min(127, Math.max(0, 12 * baseOctave + rootNote + intervals[degree]));
-    const frequency = MIDI_FREQUENCIES[midiNote] || 440;
-    const noteName = `${NOTE_NAMES[midiNote % 12]}${Math.floor(midiNote / 12) - 1}`;
+    const root = ((rootNote % 12) + 12) % 12;
+    const baseMidi = (4 + 1) * 12 + root; // Base octave 4 (C4)
+    let midiNote = baseMidi + intervals[stepIdx] + octaveShift * 12;
+    midiNote = Math.max(0, Math.min(127, midiNote));
 
-    const durationRatio = [0.25, 0.5, 0.75, 1.0][(h >>> 8) % 4];
-    const durationMs = Math.round((60000 / bpm) * durationRatio);
-    const velocity = 70 + ((h >>> 12) % 45); // 70..115
+    const velocitySample = getSample((this.cell + 25) >>> 0, this.frac, this.seed);
+    const velocity = Math.max(40, Math.min(127, Math.floor(40.0 + velocitySample * 87.0)));
+
+    const rhythmSample = getFbmSample((this.cell + 50) >>> 0, this.frac, this.seed, 2);
+    const numChoices = bpm > 0 && timeSig === TimeSignature.FourFour ? 4 : 3;
+    const scaledRhythm = Math.max(0, Math.min(numChoices - 1, Math.floor(rhythmSample * numChoices)));
+    const durationMs = calculateDuration(scaledRhythm, bpm, timeSig);
+
+    let isRest = false;
+    if (hasRests) {
+      const restSample = getSample((this.cell + 100) >>> 0, this.frac, this.seed);
+      if (restSample < 0.18) {
+        isRest = true;
+      }
+    }
+
+    const frequency = isRest ? 0 : MIDI_FREQUENCIES[midiNote] || 440;
+    const noteName = isRest ? "REST" : `${NOTE_NAMES[midiNote % 12]}${Math.floor(midiNote / 12) - 1}`;
+
+    this.frac += timeStep;
+    if (this.frac >= 1.0) {
+      const whole = Math.floor(this.frac);
+      this.cell = (this.cell + whole) >>> 0;
+      this.frac -= whole;
+    }
+    this.step++;
 
     return {
       frequency,
@@ -232,7 +352,7 @@ export class SomniaEngine {
       label: noteName,
       midiNote,
       velocity,
-      isRest: false,
+      isRest,
     };
   }
 
@@ -245,19 +365,18 @@ export class SomniaEngine {
     if (newSeed !== undefined) {
       this.seed = newSeed;
     }
-    this.state = {
-      phaseQ8: 0,
-      stepIndex: 0,
-    };
+    this.cell = 0;
+    this.frac = 0;
+    this.step = 0;
   }
 
   /**
    * Returns a snapshot copy of the current generator stream state.
    *
-   * @returns Current fixed-point stream state.
+   * @returns Current stream state.
    */
-  public getState(): Readonly<StreamStateQ8> {
-    return { ...this.state };
+  public getState(): Readonly<StreamState> {
+    return { cell: this.cell, frac: this.frac, step: this.step };
   }
 }
 

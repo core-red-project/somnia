@@ -29,6 +29,26 @@ describe("Somnia TypeScript Engine", () => {
         }
     });
 
+    it("matches C++ core conformance fixtures exactly", () => {
+        // Conformance Test 1: C Dorian (seed 12345, 120 bpm, 4 steps, root 0, no rests)
+        const engineDorian = new SomniaEngine(12345);
+        const dorianNotes: number[] = [];
+        for (let i = 0; i < 4; ++i) {
+            const ev = engineDorian.nextEvent(ScaleType.Dorian, 0, 120, false);
+            dorianNotes.push(ev.midiNote);
+        }
+        expect(dorianNotes).toEqual([98, 79, 87, 60]);
+
+        // Conformance Test 2: Hirajoshi (seed 42, 100 bpm, 4 steps, root 9, no rests)
+        const engineHirajoshi = new SomniaEngine(42);
+        const hirajoshiNotes: number[] = [];
+        for (let i = 0; i < 4; ++i) {
+            const ev = engineHirajoshi.nextEvent(ScaleType.Hirajoshi, 9, 100, false);
+            hirajoshiNotes.push(ev.midiNote);
+        }
+        expect(hirajoshiNotes).toEqual([93, 88, 76, 95]);
+    });
+
     it("throws RangeError on non-positive BPM", () => {
         const engine = new SomniaEngine();
         expect(() => engine.nextEvent(ScaleType.Dorian, 0, 0)).toThrow(RangeError);
