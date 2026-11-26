@@ -33,11 +33,11 @@ Changelog = "https://github.com/core-red-project/somnia/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["somnia"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"somnia/*.so" = "somnia/"
-"somnia/*.dylib" = "somnia/"
-"somnia/*.dll" = "somnia/"
+artifacts = [
+    "somnia/*.so",
+    "somnia/*.dylib",
+    "somnia/*.dll",
+]
 
 [tool.hatch.build.targets.sdist]
 include = [
