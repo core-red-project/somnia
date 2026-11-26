@@ -1,6 +1,6 @@
 {
   "name": "@sxnnyside/somnia",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Deterministic zero-allocation procedural audio generator and ambient synthesizer engine",
   "main": "dist/index.cjs",
   "module": "dist/index.js",

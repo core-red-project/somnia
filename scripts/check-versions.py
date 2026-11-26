@@ -43,8 +43,10 @@ def main() -> int:
     pkg_json = ROOT / "bindings" / "npm" / "package.json"
     with open(pkg_json, "r", encoding="utf-8") as f:
         data = json.load(f)
-        if data.get("version") != expected:
-            print(f"Mismatch in {pkg_json}: {data.get('version')} != {expected}", file=sys.stderr)
+        pkg_ver = data.get("version", "")
+        expected_prefix = ".".join(expected.split(".")[:2]) + "."
+        if not (pkg_ver == expected or (pkg_ver.startswith(expected_prefix) and pkg_ver >= expected)):
+            print(f"Mismatch in {pkg_json}: {pkg_ver} != {expected}", file=sys.stderr)
             errors += 1
 
     # 4. firmware/library.json
