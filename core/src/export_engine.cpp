@@ -2,7 +2,10 @@
 
 #include <sstream>
 
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
@@ -26,7 +29,9 @@ std::string ExportEngine::toMockJson(const std::vector<NoteEvent>& sequence) con
     return toMockJson(std_compat::span<const NoteEvent>(sequence.data(), sequence.size()));
 }
 
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
 

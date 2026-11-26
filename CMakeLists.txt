@@ -10,7 +10,7 @@ option(ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer
 
 add_library(project_options INTERFACE)
 if(MSVC)
-    target_compile_options(project_options INTERFACE /W4 /WX /wd4244 /wd4267)
+    target_compile_options(project_options INTERFACE /W4 /WX /wd4244 /wd4267 /wd4996)
     target_compile_definitions(project_options INTERFACE _CRT_SECURE_NO_WARNINGS)
 else()
     target_compile_options(project_options INTERFACE -Wall -Wextra -Wpedantic -Werror)
