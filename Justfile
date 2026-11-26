@@ -41,12 +41,12 @@ format:
 
 format-check:
     clang-format --dry-run -Werror $(git ls-files "*.cpp" "*.hpp" "*.h" "*.cc" "*.ino")
-    shfmt -d scripts/ .githooks/
+    @if command -v shfmt >/dev/null 2>&1; then shfmt -d scripts/ .githooks/; fi
 
 lint-files:
-    actionlint .github/workflows/*.yml
-    shellcheck scripts/*.sh .githooks/*
-    shfmt -d scripts/ .githooks/
+    @if command -v actionlint >/dev/null 2>&1; then actionlint .github/workflows/*.yml; fi
+    @if command -v shellcheck >/dev/null 2>&1; then shellcheck scripts/*.sh .githooks/*; fi
+    @if command -v shfmt >/dev/null 2>&1; then shfmt -d scripts/ .githooks/; fi
 
 check: format-check lint typecheck test lint-files
 

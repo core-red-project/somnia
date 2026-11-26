@@ -2,6 +2,11 @@
 
 #include <sstream>
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 std::string ExportEngine::toMockJson(std_compat::span<const NoteEvent> sequence) const {
     std::ostringstream oss;
     oss << "[";
@@ -16,6 +21,14 @@ std::string ExportEngine::toMockJson(std_compat::span<const NoteEvent> sequence)
     oss << "]";
     return oss.str();
 }
+
+std::string ExportEngine::toMockJson(const std::vector<NoteEvent>& sequence) const {
+    return toMockJson(std_compat::span<const NoteEvent>(sequence.data(), sequence.size()));
+}
+
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 std::string ExportEngine::toJson(std_compat::span<const NoteEvent> sequence) const {
     std::ostringstream oss;

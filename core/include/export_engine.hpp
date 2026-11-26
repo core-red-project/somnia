@@ -12,9 +12,7 @@ public:
     [[deprecated("Use toJson() instead")]] [[nodiscard]] std::string
     toMockJson(std_compat::span<const NoteEvent> sequence) const;
     [[deprecated("Use toJson() instead")]] [[nodiscard]] std::string
-    toMockJson(const std::vector<NoteEvent>& sequence) const {
-        return toMockJson(std_compat::span<const NoteEvent>(sequence.data(), sequence.size()));
-    }
+    toMockJson(const std::vector<NoteEvent>& sequence) const;
 
     // Standard modern formats
     [[nodiscard]] std::string toJson(std_compat::span<const NoteEvent> sequence) const;
