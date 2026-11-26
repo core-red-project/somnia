@@ -21,6 +21,7 @@ target_link_libraries(somnia_core PUBLIC project_options)
 add_library(somnia_shared SHARED $<TARGET_OBJECTS:somnia_core_obj>)
 set_target_properties(somnia_shared PROPERTIES 
     OUTPUT_NAME "somnia_core"
+    ARCHIVE_OUTPUT_NAME "somnia_shared"
     WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
 target_include_directories(somnia_shared PUBLIC include)
