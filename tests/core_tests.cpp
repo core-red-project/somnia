@@ -743,7 +743,7 @@ void testCliArgumentValidation() {
         bool caught = false;
         try {
             parseCommandLine(3, const_cast<char**>(argv));
-        } catch (const std::invalid_argument& e) {
+        } catch (const std::invalid_argument&) {
             caught = true;
         }
         ASSERT_TRUE(caught, "Cli parser failed to reject unknown flag '--sclae'");
@@ -755,7 +755,7 @@ void testCliArgumentValidation() {
         bool caught = false;
         try {
             parseCommandLine(3, const_cast<char**>(argv));
-        } catch (const std::invalid_argument& e) {
+        } catch (const std::invalid_argument&) {
             caught = true;
         }
         ASSERT_TRUE(caught, "Cli parser failed to reject typo in scale name 'dorain'");
@@ -767,7 +767,7 @@ void testCliArgumentValidation() {
         bool caught = false;
         try {
             parseCommandLine(3, const_cast<char**>(argv));
-        } catch (const std::invalid_argument& e) {
+        } catch (const std::invalid_argument&) {
             caught = true;
         }
         ASSERT_TRUE(caught, "Cli parser failed to reject invalid root note 'H'");
@@ -779,7 +779,7 @@ void testCliArgumentValidation() {
         bool caught = false;
         try {
             parseCommandLine(3, const_cast<char**>(argv));
-        } catch (const std::invalid_argument& e) {
+        } catch (const std::invalid_argument&) {
             caught = true;
         }
         ASSERT_TRUE(caught, "Cli parser failed to reject BPM = 0");
