@@ -27,9 +27,9 @@ typecheck:
     cmake --build --preset dev
 
 lint:
-    @if command -v clang-tidy >/dev/null 2>&1; then \
+    @if [ -f "build/dev/compile_commands.json" ] && command -v clang-tidy >/dev/null 2>&1; then \
         clang-tidy -p build/dev $(git ls-files "core/src/*.cpp" "cli/src/*.cpp"); \
-    elif [ -x "/opt/homebrew/opt/llvm/bin/clang-tidy" ]; then \
+    elif [ -f "build/dev/compile_commands.json" ] && [ -x "/opt/homebrew/opt/llvm/bin/clang-tidy" ]; then \
         /opt/homebrew/opt/llvm/bin/clang-tidy -p build/dev $(git ls-files "core/src/*.cpp" "cli/src/*.cpp"); \
     else \
         clang-format --dry-run -Werror $(git ls-files "*.cpp" "*.hpp" "*.h" "*.cc" "*.ino"); \

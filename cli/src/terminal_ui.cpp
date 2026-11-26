@@ -61,7 +61,7 @@ void ColorTheme::disable() {
 
 #if defined(__unix__) || defined(__APPLE__)
 struct TerminalRawMode::termios_holder {
-    struct termios orig{};
+    termios orig = {};
 };
 #endif
 
